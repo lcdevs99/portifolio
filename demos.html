@@ -1,0 +1,639 @@
+<title>Demos · Lucas Cruz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Layout: tabbed demo stage — a phone-style chat and a live-call panel, over the portfolio's dark teal/violet system */
+  :root {
+    --bg: #0b0e14;
+    --surface: #121722;
+    --surface-2: #1a2130;
+    --line: #273040;
+    --fg: #e6ebf2;
+    --muted: #8b97ad;
+    --accent: #5eead4;
+    --accent-2: #a78bfa;
+    --accent-ink: #052e2b;
+    --wa: #25d366;
+    --wa-bubble-in: #1f2c33;
+    --wa-bubble-out: #005c4b;
+    --good: #4ade80;
+    --warn: #fbbf24;
+    color-scheme: dark;
+    --display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --body: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --surface: #ffffff; --surface-2: #eef1f6; --line: #dce1ea;
+    --fg: #121722; --muted: #56617a; --accent: #0d9488; --accent-2: #7c3aed; --accent-ink: #ffffff;
+    --wa-bubble-in: #ffffff; --wa-bubble-out: #d9fdd3;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --surface: #ffffff; --surface-2: #eef1f6; --line: #dce1ea;
+      --fg: #121722; --muted: #56617a; --accent: #0d9488; --accent-2: #7c3aed; --accent-ink: #ffffff;
+      --wa-bubble-in: #ffffff; --wa-bubble-out: #d9fdd3;
+      color-scheme: light;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--body);
+    line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  .wrap {
+    max-width: 1040px; margin: 0 auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  h1, h2, h3 { margin: 0; line-height: 1.12; text-wrap: balance; }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: blur(12px); border-bottom: 1px solid var(--line);
+  }
+  .head-inner { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-block: 14px; }
+  .back {
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    text-decoration: none; display: inline-flex; align-items: center; gap: 7px;
+  }
+  .back:hover { color: var(--accent); }
+  .controls { display: flex; gap: 8px; }
+  .btn-ghost {
+    font-family: var(--mono); font-size: 12px; background: var(--surface-2);
+    color: var(--fg); border: 1px solid var(--line); border-radius: 8px;
+    padding: 7px 11px; cursor: pointer; transition: border-color .2s, color .2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- Intro ---------- */
+  .intro { padding-block: clamp(32px, 6vw, 56px) 20px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 13px; letter-spacing: .04em;
+    color: var(--accent); display: flex; align-items: center; gap: 9px; margin-bottom: 16px;
+  }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .intro h1 { font-family: var(--display); font-size: clamp(28px, 6vw, 46px); font-weight: 600; letter-spacing: -.03em; margin-bottom: 14px; }
+  .intro p { color: var(--muted); max-width: 60ch; margin: 0; font-size: clamp(15px, 2vw, 17px); }
+  .demo-badge {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 18px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    border: 1px dashed var(--line); border-radius: 8px; padding: 7px 12px;
+  }
+  .demo-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); flex: none; }
+
+  /* ---------- Tabs ---------- */
+  .tabs { display: flex; gap: 8px; margin-block: 28px 24px; flex-wrap: wrap; }
+  .tab {
+    font-family: var(--body); font-size: 14px; font-weight: 600;
+    background: var(--surface); color: var(--muted); border: 1px solid var(--line);
+    border-radius: 10px; padding: 11px 18px; cursor: pointer; transition: all .2s;
+  }
+  .tab:hover { color: var(--fg); }
+  .tab[aria-selected="true"] { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .stage { padding-bottom: 64px; }
+  .panel { display: grid; grid-template-columns: 340px 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 800px) { .panel { grid-template-columns: 1fr; gap: 22px; } }
+
+  /* ---------- Phone (WhatsApp) ---------- */
+  .phone {
+    width: 100%; max-width: 340px; margin: 0 auto;
+    background: #0b141a; border: 8px solid #222d34; border-radius: 30px;
+    overflow: hidden; box-shadow: 0 20px 50px -20px rgba(0,0,0,.6);
+    display: flex; flex-direction: column; height: 560px;
+  }
+  .wa-top {
+    background: #202c33; display: flex; align-items: center; gap: 11px;
+    padding: 12px 14px; flex: none;
+  }
+  .wa-avatar {
+    width: 38px; height: 38px; border-radius: 50%; flex: none;
+    background: linear-gradient(135deg, var(--wa), #128c7e);
+    display: grid; place-items: center; font-weight: 700; color: #fff; font-size: 16px;
+  }
+  .wa-name { color: #e9edef; font-size: 15px; font-weight: 600; line-height: 1.2; }
+  .wa-status { color: #8696a0; font-size: 12px; }
+  .wa-body {
+    flex: 1; overflow-y: auto; padding: 16px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    background-color: #0b141a;
+    background-image: radial-gradient(color-mix(in srgb, #182229 60%, transparent) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  .msg {
+    max-width: 82%; padding: 8px 11px; border-radius: 10px; font-size: 13.5px;
+    line-height: 1.45; color: #e9edef; white-space: pre-wrap; word-break: break-word;
+    animation: pop .25s ease;
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .msg.in { background: var(--wa-bubble-in); align-self: flex-start; border-top-left-radius: 3px; }
+  .msg.out { background: var(--wa-bubble-out); align-self: flex-end; border-top-right-radius: 3px; color: #e9edef; }
+  :root[data-theme="light"] .msg.out { color: #111b21; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .msg.out { color: #111b21; } :root:not([data-theme="dark"]) .msg.in { color: #111b21; } }
+  .msg .time { font-size: 10px; color: #8696a0; float: right; margin: 6px 0 -2px 8px; }
+  .msg .tick { color: #53bdeb; }
+  .typing { align-self: flex-start; background: var(--wa-bubble-in); padding: 11px 14px; border-radius: 10px; border-top-left-radius: 3px; display: flex; gap: 4px; }
+  .typing span { width: 7px; height: 7px; border-radius: 50%; background: #8696a0; animation: blink 1.3s infinite; }
+  .typing span:nth-child(2) { animation-delay: .2s; }
+  .typing span:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
+  .wa-foot { flex: none; padding: 10px; background: #202c33; }
+
+  /* ---------- Chips / controls ---------- */
+  .side { display: flex; flex-direction: column; gap: 18px; }
+  .side-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .side-card h3 { font-family: var(--display); font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .side-card p { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  .chips { display: flex; flex-direction: column; gap: 9px; }
+  .chip {
+    text-align: left; font-family: var(--body); font-size: 14px;
+    background: var(--surface-2); color: var(--fg); border: 1px solid var(--line);
+    border-radius: 10px; padding: 11px 14px; cursor: pointer;
+    transition: border-color .2s, transform .12s; display: flex; align-items: center; gap: 9px;
+  }
+  .chip:hover:not(:disabled) { border-color: var(--accent); transform: translateX(3px); }
+  .chip:disabled { opacity: .4; cursor: default; }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip .ic { color: var(--accent); font-family: var(--mono); font-size: 12px; flex: none; }
+  .reset {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    background: none; border: none; cursor: pointer; padding: 4px; align-self: flex-start;
+  }
+  .reset:hover { color: var(--accent); }
+
+  .steps { display: flex; flex-direction: column; gap: 2px; }
+  .step {
+    display: flex; align-items: center; gap: 11px; padding: 9px 4px; font-size: 13.5px; color: var(--muted);
+    transition: color .3s;
+  }
+  .step .dot {
+    width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--line); flex: none; transition: all .3s;
+  }
+  .step.active { color: var(--fg); }
+  .step.active .dot { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .step.done .dot { border-color: var(--accent); background: var(--accent); }
+
+  /* ---------- Voice call ---------- */
+  .call {
+    width: 100%; max-width: 340px; margin: 0 auto; height: 560px;
+    background: linear-gradient(180deg, #0f1722, #0b0e14);
+    border: 1px solid var(--line); border-radius: 24px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .call-top { padding: 26px 20px 18px; text-align: center; flex: none; }
+  .call-orb {
+    width: 92px; height: 92px; border-radius: 50%; margin: 0 auto 16px; position: relative;
+    background: radial-gradient(circle at 35% 30%, var(--accent), #0f766e);
+    display: grid; place-items: center;
+  }
+  .call-orb svg { width: 36px; height: 36px; stroke: #fff; fill: none; stroke-width: 2; }
+  .call-orb.ringing { animation: ring 1s ease-in-out infinite; }
+  @keyframes ring { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+  .call-orb .wave {
+    position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent); opacity: 0;
+  }
+  .call-orb.live .wave { animation: wave 1.8s ease-out infinite; }
+  @keyframes wave { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(1.7); opacity: 0; } }
+  .call-who { color: #e9edef; font-size: 18px; font-weight: 600; font-family: var(--display); }
+  .call-sub { color: #8696a0; font-size: 13px; font-family: var(--mono); margin-top: 4px; }
+  .transcript {
+    flex: 1; overflow-y: auto; padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .line { animation: pop .3s ease; max-width: 90%; }
+  .line .spk { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 3px; }
+  .line.agent { align-self: flex-start; }
+  .line.agent .spk { color: var(--accent); }
+  .line.lead { align-self: flex-end; text-align: right; }
+  .line.lead .spk { color: var(--accent-2); }
+  .line .txt { font-size: 13.5px; color: #d4dbe4; background: #182029; padding: 9px 12px; border-radius: 10px; }
+  .line.lead .txt { background: #1e1830; }
+  .result {
+    margin: 4px 16px 16px; flex: none; background: color-mix(in srgb, var(--good) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--good) 40%, transparent); border-radius: 12px; padding: 14px;
+    display: flex; flex-direction: column; gap: 6px; animation: pop .4s ease;
+  }
+  .result .r-top { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--good); font-size: 14px; }
+  .result .r-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); font-family: var(--mono); }
+  .result .r-row b { color: var(--fg); font-weight: 600; }
+  .handoff {
+    margin: 0 16px 16px; flex: none; font-family: var(--mono); font-size: 12px; color: var(--accent);
+    display: flex; align-items: center; gap: 8px; animation: pop .4s ease;
+  }
+  .handoff .spin { width: 12px; height: 12px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .big-start {
+    font-family: var(--body); font-size: 15px; font-weight: 600; width: 100%;
+    background: var(--accent); color: var(--accent-ink); border: none; border-radius: 12px;
+    padding: 14px; cursor: pointer; transition: transform .15s; display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  .big-start:hover:not(:disabled) { transform: translateY(-2px); }
+  .big-start:disabled { opacity: .5; cursor: default; }
+
+  [hidden] { display: none !important; }
+</style>
+
+<header>
+  <div class="wrap head-inner">
+    <a href="#" class="back" id="backLink">← <span data-pt="voltar ao portfólio" data-en="back to portfolio"></span></a>
+    <div class="controls">
+      <button class="btn-ghost" id="langToggle">EN</button>
+      <button class="btn-ghost" id="themeToggle" aria-label="theme">◐</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap intro">
+  <div class="eyebrow"><span data-pt="Demos" data-en="Demos"></span></div>
+  <h1 data-pt="Umas coisas que montei" data-en="A few things I built"></h1>
+  <p data-pt="Dois exemplos do tipo de automação que eu faço: um atendimento por WhatsApp e uma ligação de qualificação por voz. Clica pra ver funcionando." data-en="Two examples of the kind of automation I do: a WhatsApp assistant and a voice qualification call. Click to see them run."></p>
+  <span class="demo-badge" data-pt="É uma simulação da interface. O fluxo funciona aqui, mas sem IA ligada nesta página." data-en="This is an interface simulation. The flow works here, but with no AI connected on this page."></span>
+</div>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="wa" data-pt="🛒 Bot de WhatsApp" data-en="🛒 WhatsApp bot"></button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="voice" data-pt="📞 Agente de voz" data-en="📞 Voice agent"></button>
+  </div>
+</div>
+
+<div class="wrap stage">
+  <!-- WHATSAPP PANEL -->
+  <div class="panel" id="panel-wa">
+    <div class="phone">
+      <div class="wa-top">
+        <div class="wa-avatar">M</div>
+        <div>
+          <div class="wa-name" data-pt="Mercado Bom Preço" data-en="Bom Preço Market"></div>
+          <div class="wa-status" id="waStatus" data-pt="online" data-en="online"></div>
+        </div>
+      </div>
+      <div class="wa-body" id="waBody"></div>
+      <div class="wa-foot"></div>
+    </div>
+    <div class="side">
+      <div class="side-card">
+        <h3 data-pt="Você é o cliente" data-en="You're the customer"></h3>
+        <p data-pt="Clica no que quer mandar e acompanha a resposta." data-en="Click what you want to send and follow the reply."></p>
+        <div class="chips" id="waChips"></div>
+      </div>
+      <div class="side-card">
+        <h3 data-pt="Por trás" data-en="Behind it"></h3>
+        <div class="steps" id="waSteps"></div>
+        <button class="reset" id="waReset" data-pt="↻ recomeçar" data-en="↻ restart"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE PANEL -->
+  <div class="panel" id="panel-voice" hidden>
+    <div class="call">
+      <div class="call-top">
+        <div class="call-orb" id="callOrb">
+          <div class="wave"></div>
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="call-who" data-pt="Construtora Alvorada" data-en="Alvorada Construction"></div>
+        <div class="call-sub" id="callSub" data-pt="pronto para ligar" data-en="ready to dial"></div>
+      </div>
+      <div class="transcript" id="transcript"></div>
+      <div class="result" id="callResult" hidden>
+        <div class="r-top">✓ <span data-pt="Lead qualificado" data-en="Lead qualified"></span></div>
+        <div class="r-row"><span data-pt="Interesse" data-en="Interest"></span><b data-pt="Alto" data-en="High"></b></div>
+        <div class="r-row"><span data-pt="Segmento" data-en="Segment"></span><b data-pt="Construção civil" data-en="Construction"></b></div>
+        <div class="r-row"><span data-pt="Próximo passo" data-en="Next step"></span><b data-pt="Reunião agendada" data-en="Meeting booked"></b></div>
+      </div>
+      <div class="handoff" id="handoff" hidden><span class="spin"></span><span data-pt="Disparando WhatsApp automaticamente…" data-en="Firing WhatsApp automatically…"></span></div>
+    </div>
+    <div class="side">
+      <div class="side-card">
+        <h3 data-pt="Ligação de qualificação" data-en="Qualification call"></h3>
+        <p data-pt="O agente liga, conversa e vê se o lead tem interesse. Se tiver, já manda a apresentação no WhatsApp." data-en="The agent calls, talks, and checks if the lead is interested. If so, it sends the intro on WhatsApp."></p>
+        <button class="big-start" id="callStart"><span data-pt="▶ Iniciar ligação" data-en="▶ Start call"></span></button>
+      </div>
+      <div class="side-card">
+        <h3 data-pt="Pipeline da chamada" data-en="Call pipeline"></h3>
+        <div class="steps" id="voiceSteps"></div>
+        <button class="reset" id="voiceReset" data-pt="↻ recomeçar" data-en="↻ restart"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var lang = 'pt';
+
+  // ---------- i18n for static nodes ----------
+  function applyLang() {
+    document.querySelectorAll('[data-pt]').forEach(function (el) {
+      var v = lang === 'pt' ? el.getAttribute('data-pt') : el.getAttribute('data-en');
+      if (v !== null) el.innerHTML = v;
+    });
+    document.getElementById('langToggle').textContent = lang === 'pt' ? 'EN' : 'PT';
+    root.setAttribute('lang', lang === 'pt' ? 'pt-BR' : 'en');
+  }
+  try { var sl = localStorage.getItem('lc_lang'); if (sl === 'pt' || sl === 'en') lang = sl; } catch (e) {}
+  document.getElementById('langToggle').addEventListener('click', function () {
+    lang = lang === 'pt' ? 'en' : 'pt';
+    try { localStorage.setItem('lc_lang', lang); } catch (e) {}
+    applyLang(); resetWA(); resetVoice();
+  });
+
+  // ---------- Theme ----------
+  function dark() {
+    var a = root.getAttribute('data-theme');
+    if (a === 'dark') return true; if (a === 'light') return false;
+    return matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  try { var st = localStorage.getItem('lc_theme'); if (st === 'dark' || st === 'light') root.setAttribute('data-theme', st); } catch (e) {}
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    var n = dark() ? 'light' : 'dark'; root.setAttribute('data-theme', n);
+    try { localStorage.setItem('lc_theme', n); } catch (e) {}
+  });
+
+  // ---------- Back link ----------
+  try {
+    if (document.referrer) document.getElementById('backLink').setAttribute('href', document.referrer);
+  } catch (e) {}
+
+  // ---------- Tabs ----------
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (x) { x.setAttribute('aria-selected', 'false'); });
+      t.setAttribute('aria-selected', 'true');
+      var id = t.getAttribute('data-tab');
+      document.getElementById('panel-wa').hidden = id !== 'wa';
+      document.getElementById('panel-voice').hidden = id !== 'voice';
+    });
+  });
+
+  function now() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+  function t(pt, en) { return lang === 'pt' ? pt : en; }
+
+  /* =========================================================
+     WHATSAPP DEMO
+     ========================================================= */
+  var waBody = document.getElementById('waBody');
+  var waChips = document.getElementById('waChips');
+  var waStepsEl = document.getElementById('waSteps');
+  var waStatus = document.getElementById('waStatus');
+  var waBusy = false;
+
+  var waStepDefs = [
+    { pt: 'Lista recebida', en: 'List received' },
+    { pt: 'Itens interpretados', en: 'Items parsed' },
+    { pt: 'Estoque conferido', en: 'Stock checked' },
+    { pt: 'Pedido montado', en: 'Order built' }
+  ];
+
+  // Conversation flow: array of steps the user triggers via chips
+  var waFlow = [
+    {
+      chip: { pt: '📋 Enviar lista de compras', en: '📋 Send shopping list' },
+      out: { pt: 'oi! queria: 2 leite, 1kg arroz, 1 coca 2L, pão de forma, 500g café', en: "hi! i'd like: 2 milk, 1kg rice, 1 coke 2L, sandwich bread, 500g coffee" },
+      step: 0,
+      replies: [
+        { pt: 'Oi! 😊 Recebi sua lista. Já organizei assim:', en: 'Hi! 😊 Got your list. Here\'s how I organized it:' },
+        { pt: '🛒 *Sua lista*\n• Leite (2 un)\n• Arroz (1 kg)\n• Coca-Cola 2L (1 un)\n• Pão de forma (1 un)\n• Café (500 g)', en: '🛒 *Your list*\n• Milk (2 un)\n• Rice (1 kg)\n• Coca-Cola 2L (1 un)\n• Sandwich bread (1 un)\n• Coffee (500 g)', step: 1 },
+        { pt: 'Só uma dúvida no leite: *integral* ou *desnatado*?', en: 'One question about the milk: *whole* or *skimmed*?' }
+      ]
+    },
+    {
+      chip: { pt: '🥛 Integral', en: '🥛 Whole' },
+      out: { pt: 'integral', en: 'whole' },
+      replies: [
+        { pt: 'Fechado, leite integral ✅', en: 'Done, whole milk ✅' },
+        { pt: 'Conferindo o estoque agora…', en: 'Checking stock now…', step: 2 },
+        { pt: '⚠️ A *Coca-Cola 2L* está em falta. Posanso trocar pela *Coca 1,5L* (2 un) ou pela *Pepsi 2L*. Quer alguma?', en: '⚠️ *Coca-Cola 2L* is out of stock. I can swap for *Coke 1.5L* (2 un) or *Pepsi 2L*. Want one of those?' }
+      ]
+    },
+    {
+      chip: { pt: '🔄 Trocar pela Coca 1,5L', en: '🔄 Swap for Coke 1.5L' },
+      out: { pt: 'pode ser a coca 1,5L', en: 'the coke 1.5L works' },
+      replies: [
+        { pt: 'Perfeito! Tudo disponível agora 👍', en: 'Perfect! Everything available now 👍' },
+        { pt: '🧾 *Pedido #4821*\n• Leite integral (2 un)\n• Arroz (1 kg)\n• Coca 1,5L (2 un)\n• Pão de forma (1 un)\n• Café 500g (1 un)\n\n*Total: R$ 63,40*', en: '🧾 *Order #4821*\n• Whole milk (2 un)\n• Rice (1 kg)\n• Coke 1.5L (2 un)\n• Sandwich bread (1 un)\n• Coffee 500g (1 un)\n\n*Total: R$ 63.40*', step: 3 },
+        { pt: 'Confirma que eu já mando pra separação? 🛵', en: 'Shall I send it to picking? 🛵' }
+      ]
+    },
+    {
+      chip: { pt: '✅ Confirmar pedido', en: '✅ Confirm order' },
+      out: { pt: 'confirmado, obrigado!', en: 'confirmed, thanks!' },
+      replies: [
+        { pt: 'Pedido enviado pra separação! 🎉 Chega em ~40 min. Obrigado pela preferência 💚', en: 'Order sent to picking! 🎉 Arrives in ~40 min. Thanks for shopping with us 💚' }
+      ]
+    }
+  ];
+
+  var waIndex = 0;
+
+  function renderWASteps(activeIdx) {
+    waStepsEl.innerHTML = '';
+    waStepDefs.forEach(function (s, i) {
+      var div = document.createElement('div');
+      div.className = 'step' + (i < activeIdx ? ' done' : '') + (i === activeIdx ? ' active' : '');
+      div.innerHTML = '<span class="dot"></span>' + t(s.pt, s.en);
+      waStepsEl.appendChild(div);
+    });
+  }
+
+  function addMsg(dir, txt, body) {
+    var m = document.createElement('div');
+    m.className = 'msg ' + dir;
+    var tick = dir === 'out' ? ' <span class="tick">✓✓</span>' : '';
+    m.innerHTML = txt.replace(/\*(.+?)\*/g, '<b>$1</b>') + '<span class="time">' + now() + tick + '</span>';
+    body.appendChild(m);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function typing(body) {
+    var tp = document.createElement('div');
+    tp.className = 'typing'; tp.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(tp); body.scrollTop = body.scrollHeight;
+    return tp;
+  }
+
+  function renderWAChips() {
+    waChips.innerHTML = '';
+    var f = waFlow[waIndex];
+    if (!f) {
+      var done = document.createElement('div');
+      done.style.cssText = 'color:var(--muted);font-size:13px;font-family:var(--mono)';
+      done.textContent = t('conversa concluída ✓', 'conversation complete ✓');
+      waChips.appendChild(done);
+      return;
+    }
+    var btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.innerHTML = '<span class="ic">▶</span>' + t(f.chip.pt, f.chip.en);
+    btn.addEventListener('click', function () { runWAStep(); });
+    btn.disabled = waBusy;
+    waChips.appendChild(btn);
+  }
+
+  function runWAStep() {
+    if (waBusy) return;
+    var f = waFlow[waIndex];
+    if (!f) return;
+    waBusy = true;
+    renderWAChips();
+    addMsg('out', t(f.out.pt, f.out.en), waBody);
+    if (typeof f.step === 'number') renderWASteps(f.step);
+
+    var i = 0;
+    function next() {
+      if (i >= f.replies.length) {
+        waBusy = false; waIndex++; renderWAChips();
+        waStatus.textContent = t('online', 'online');
+        return;
+      }
+      waStatus.textContent = t('digitando…', 'typing…');
+      var tp = typing(waBody);
+      var r = f.replies[i];
+      setTimeout(function () {
+        tp.remove();
+        addMsg('in', t(r.pt, r.en), waBody);
+        if (typeof r.step === 'number') renderWASteps(r.step);
+        i++;
+        setTimeout(next, 420);
+      }, 750 + Math.random() * 500);
+    }
+    setTimeout(next, 400);
+  }
+
+  function resetWA() {
+    waBody.innerHTML = ''; waIndex = 0; waBusy = false;
+    addMsg('in', t('Olá! 👋 Sou o atendente do Mercado Bom Preço. Me manda sua lista de compras que eu monto seu pedido.', 'Hi! 👋 I\'m Bom Preço Market\'s assistant. Send me your shopping list and I\'ll build your order.'), waBody);
+    renderWASteps(-1);
+    renderWAChips();
+  }
+  document.getElementById('waReset').addEventListener('click', resetWA);
+
+  /* =========================================================
+     VOICE DEMO
+     ========================================================= */
+  var transcript = document.getElementById('transcript');
+  var callOrb = document.getElementById('callOrb');
+  var callSub = document.getElementById('callSub');
+  var callStart = document.getElementById('callStart');
+  var callResult = document.getElementById('callResult');
+  var handoff = document.getElementById('handoff');
+  var voiceStepsEl = document.getElementById('voiceSteps');
+  var voiceRunning = false;
+
+  var voiceStepDefs = [
+    { pt: 'Discando', en: 'Dialing' },
+    { pt: 'Conversa em andamento', en: 'Conversation' },
+    { pt: 'Qualificando interesse', en: 'Qualifying interest' },
+    { pt: 'Handoff p/ WhatsApp', en: 'Handoff to WhatsApp' }
+  ];
+
+  var dialogue = [
+    { spk: 'agent', pt: 'Olá, falo com o responsável pela Construtora Alvorada?', en: 'Hi, am I speaking with the person in charge at Alvorada Construction?' },
+    { spk: 'lead', pt: 'Sim, é comigo. Pois não?', en: 'Yes, speaking. How can I help?' },
+    { spk: 'agent', pt: 'Aqui é da Lancces, assessoria em licitações. Vocês já participam de licitações públicas hoje?', en: 'This is Lancces, public-tender advisory. Do you take part in public tenders today?' },
+    { spk: 'lead', pt: 'Olha, a gente até quer, mas acha o processo complicado.', en: 'Well, we\'d like to, but we find the process complicated.' },
+    { spk: 'agent', pt: 'É exatamente aí que a gente entra. Posso agendar 15 min com um especialista pra te mostrar as licitações abertas pro seu segmento?', en: 'That\'s exactly where we come in. Can I book 15 min with a specialist to show you the open tenders for your segment?' },
+    { spk: 'lead', pt: 'Pode sim, tenho interesse. Amanhã de tarde funciona.', en: 'Sure, I\'m interested. Tomorrow afternoon works.' },
+    { spk: 'agent', pt: 'Perfeito! Vou te mandar a confirmação e o link no WhatsApp agora mesmo. Obrigado!', en: 'Perfect! I\'ll send the confirmation and link on WhatsApp right now. Thank you!' }
+  ];
+
+  function renderVoiceSteps(activeIdx) {
+    voiceStepsEl.innerHTML = '';
+    voiceStepDefs.forEach(function (s, i) {
+      var div = document.createElement('div');
+      div.className = 'step' + (i < activeIdx ? ' done' : '') + (i === activeIdx ? ' active' : '');
+      div.innerHTML = '<span class="dot"></span>' + t(s.pt, s.en);
+      voiceStepsEl.appendChild(div);
+    });
+  }
+
+  function resetVoice() {
+    voiceRunning = false;
+    transcript.innerHTML = '';
+    callResult.hidden = true; handoff.hidden = true;
+    callOrb.classList.remove('ringing', 'live');
+    callSub.textContent = t('pronto para ligar', 'ready to dial');
+    callStart.disabled = false;
+    callStart.querySelector('span').textContent = t('▶ Iniciar ligação', '▶ Start call');
+    renderVoiceSteps(-1);
+  }
+
+  function addLine(d) {
+    var line = document.createElement('div');
+    line.className = 'line ' + d.spk;
+    var who = d.spk === 'agent' ? t('Agente IA', 'AI Agent') : t('Lead', 'Lead');
+    line.innerHTML = '<div class="spk">' + who + '</div><div class="txt">' + t(d.pt, d.en) + '</div>';
+    transcript.appendChild(line);
+    transcript.scrollTop = transcript.scrollHeight;
+  }
+
+  function runCall() {
+    if (voiceRunning) return;
+    voiceRunning = true;
+    callStart.disabled = true;
+    callResult.hidden = true; handoff.hidden = true;
+    transcript.innerHTML = '';
+
+    // ringing
+    callOrb.classList.add('ringing');
+    callSub.textContent = t('chamando…', 'ringing…');
+    renderVoiceSteps(0);
+
+    setTimeout(function () {
+      callOrb.classList.remove('ringing');
+      callOrb.classList.add('live');
+      callSub.textContent = t('conectado · 00:0' , 'connected · 00:0');
+      renderVoiceSteps(1);
+
+      var i = 0;
+      function speak() {
+        if (i >= dialogue.length) { finishCall(); return; }
+        var d = dialogue[i];
+        if (d.spk === 'agent' && i >= 4) renderVoiceSteps(2);
+        addLine(d);
+        callSub.textContent = t('conectado · 00:' , 'connected · 00:') + ('0' + (i + 1)).slice(-2);
+        i++;
+        setTimeout(speak, 1500 + Math.random() * 700);
+      }
+      setTimeout(speak, 600);
+    }, 1800);
+  }
+
+  function finishCall() {
+    callOrb.classList.remove('live');
+    callSub.textContent = t('chamada encerrada · 00:08', 'call ended · 00:08');
+    callResult.hidden = false;
+    renderVoiceSteps(3);
+    setTimeout(function () {
+      handoff.hidden = false;
+      setTimeout(function () {
+        handoff.innerHTML = '<span style="color:var(--good)">✓</span><span>' + t('Mensagem enviada no WhatsApp com o link da reunião', 'WhatsApp message sent with the meeting link') + '</span>';
+        voiceStepsEl.querySelectorAll('.step')[3].classList.add('done');
+        voiceStepsEl.querySelectorAll('.step')[3].classList.remove('active');
+        callStart.disabled = false;
+        callStart.querySelector('span').textContent = t('▶ Ligar de novo', '▶ Call again');
+        voiceRunning = false;
+      }, 2000);
+    }, 700);
+  }
+
+  callStart.addEventListener('click', runCall);
+  document.getElementById('voiceReset').addEventListener('click', resetVoice);
+
+  // ---------- init ----------
+  applyLang();
+  resetWA();
+  resetVoice();
+})();
+</script>
