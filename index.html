@@ -250,6 +250,25 @@ img { max-width: 100%; }
   .fact .v { font-size: 13px; font-weight: 600; font-family: var(--mono); text-align: right; }
 
   /* ---------- Projects ---------- */
+  .group-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .group-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .group-title + .projects { margin-bottom: 40px; }
   .projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   @media (max-width: 900px) { .projects { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 620px) { .projects { grid-template-columns: 1fr; } }
@@ -485,11 +504,38 @@ img { max-width: 100%; }
       <span class="sec-num">02</span>
       <h2 data-pt="Projetos" data-en="Projects"></h2>
     </div>
+
+    <h3 class="group-title reveal" data-pt="Projetos pessoais" data-en="Personal projects"></h3>
+    <div class="projects">
+      <article class="card reveal">
+        <span class="tag">Backend · API REST</span>
+        <h3 data-pt="ERP · Gestão de Pedidos" data-en="ERP · Order Management"></h3>
+        <p data-pt="Módulo de gestão de pedidos para um ERP, com API REST em Django seguindo arquitetura limpa e SOLID. Banco em MySQL com Redis, containerizado em Docker e documentado com Swagger." data-en="Order management module for an ERP, with a Django REST API following clean architecture and SOLID. MySQL with Redis, containerized in Docker and documented with Swagger."></p>
+        <a href="https://github.com/lcdevs99/ERP" target="_blank" rel="noopener" class="card-demo" data-pt="▶ ver no GitHub" data-en="▶ view on GitHub"></a>
+        <div class="stack"><span class="chip">Python</span><span class="chip">Django REST</span><span class="chip">MySQL</span><span class="chip">Docker</span></div>
+      </article>
+      <article class="card reveal">
+        <span class="tag">Fullstack · PWA</span>
+        <h3 data-pt="App Fullstack com autenticação" data-en="Fullstack app with auth"></h3>
+        <p data-pt="Aplicação web progressiva de ponta a ponta: backend em Node/Express com autenticação JWT, banco MySQL via Sequelize e API documentada, e frontend em Next.js consumindo a API." data-en="End-to-end progressive web app: Node/Express backend with JWT auth, MySQL via Sequelize and a documented API, plus a Next.js frontend consuming it."></p>
+        <a href="https://github.com/lcdevs99/gold_pwa" target="_blank" rel="noopener" class="card-demo" data-pt="▶ ver no GitHub" data-en="▶ view on GitHub"></a>
+        <div class="stack"><span class="chip">Node/Express</span><span class="chip">Next.js</span><span class="chip">MySQL</span><span class="chip">JWT</span></div>
+      </article>
+      <article class="card reveal">
+        <span class="tag">IA · Fullstack</span>
+        <h3 data-pt="Email Classifier AI" data-en="Email Classifier AI"></h3>
+        <p data-pt="Aplicação que classifica e-mails em produtivos ou improdutivos e sugere respostas automáticas. Backend em Flask servindo um modelo de IA (Hugging Face) e interface web, aceitando texto, .txt e .pdf." data-en="App that classifies emails as productive or unproductive and suggests automatic replies. Flask backend serving an AI model (Hugging Face) with a web interface, accepting text, .txt and .pdf."></p>
+        <a href="https://github.com/lcdevs99/--email-classifier-ai---" target="_blank" rel="noopener" class="card-demo" data-pt="▶ ver no GitHub" data-en="▶ view on GitHub"></a>
+        <div class="stack"><span class="chip">Python</span><span class="chip">Flask</span><span class="chip" data-pt="IA / NLP" data-en="AI / NLP"></span></div>
+      </article>
+    </div>
+
+    <h3 class="group-title reveal" data-pt="Projetos profissionais" data-en="Professional work"></h3>
     <div class="projects">
       <article class="card reveal">
         <span class="tag">LangGraph · RAG</span>
         <h3 data-pt="Crews de agentes de IA" data-en="AI agent crews"></h3>
-        <p data-pt="Agentes que interpretam pedidos em linguagem natural, acionam ferramentas por tool calling e montam o plano da campanha. Cada agente responde a partir de uma base de conhecimento real, consultada na hora." data-en="Agents that read natural-language requests, call tools and build the campaign plan. Each agent answers from a real knowledge base, queried on the fly."></p>
+        <p data-pt="Na Macro, agentes que interpretam pedidos em linguagem natural, acionam ferramentas por tool calling e montam o plano da campanha. Cada agente responde a partir de uma base de conhecimento real, consultada na hora." data-en="At Macro, agents that read natural-language requests, call tools and build the campaign plan. Each agent answers from a real knowledge base, queried on the fly."></p>
         <a href="demos.html" class="card-demo" data-pt="▶ ver demo de WhatsApp" data-en="▶ see WhatsApp demo"></a>
         <div class="stack"><span class="chip">Python</span><span class="chip">LangGraph</span><span class="chip">FastAPI</span><span class="chip">RAG</span></div>
       </article>
@@ -505,12 +551,6 @@ img { max-width: 100%; }
         <h3 data-pt="Bilhete Universitário · Maricá" data-en="Student Transit Pass · Maricá"></h3>
         <p data-pt="Sistema de transporte estudantil da Prefeitura de Maricá, na CADS Digital. Atuei no backend e no suporte, cuidando das APIs e da estabilidade da aplicação em produção, com atendimento aos usuários e correção de problemas." data-en="Student transport system for the City of Maricá, at CADS Digital. I worked on the backend and support, handling the APIs and the app's stability in production, with user support and bug fixing."></p>
         <div class="stack"><span class="chip">Backend</span><span class="chip">APIs</span><span class="chip" data-pt="Suporte" data-en="Support"></span></div>
-      </article>
-      <article class="card reveal">
-        <span class="tag">ML Ops · Pipeline</span>
-        <h3 data-pt="Ciclo de aprendizagem" data-en="Learning loop"></h3>
-        <p data-pt="Pipeline que parte de conversas reais e passa por transcrição, estruturação e destilação até virar conhecimento revisado por humano, publicado direto no discurso dos agentes de voz e de WhatsApp." data-en="A pipeline that starts from real conversations and runs through transcription, structuring and distillation into human-reviewed knowledge, published straight into the voice and WhatsApp agents' speech."></p>
-        <div class="stack"><span class="chip">Python</span><span class="chip">PostgreSQL</span><span class="chip">RAG</span></div>
       </article>
       <article class="card reveal">
         <span class="tag">Dashboards · BI</span>
