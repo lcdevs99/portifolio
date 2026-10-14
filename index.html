@@ -115,6 +115,16 @@ img { max-width: 100%; }
     transition: color .2s;
   }
   .nav-links a:hover { color: var(--fg); }
+  .nav-links a.navlink { position: relative; }
+  .nav-links a.navlink.active { color: var(--fg); }
+  .nav-links a.navlink.active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
   .nav-links a.navlink-demos { color: var(--accent); font-weight: 600; }
   .nav-links a.navlink-demos:hover { color: var(--accent); opacity: .8; }
   @media (max-width: 680px) { .nav-links .navlink:not(.navlink-demos) { display: none; } }
@@ -738,6 +748,28 @@ img { max-width: 100%; }
       });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    // ---- Scrollspy: destaca o item do menu da seção atual ----
+    var spyLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a.navlink[href^="#"]'));
+    var spyMap = {};
+    spyLinks.forEach(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      var sec = document.getElementById(id);
+      if (sec) spyMap[id] = { link: a, sec: sec };
+    });
+    function updateSpy() {
+      var line = window.innerHeight * 0.3;
+      var current = null;
+      Object.keys(spyMap).forEach(function (id) {
+        var top = spyMap[id].sec.getBoundingClientRect().top;
+        if (top <= line) current = id;
+      });
+      spyLinks.forEach(function (a) { a.classList.remove('active'); });
+      if (current && spyMap[current]) spyMap[current].link.classList.add('active');
+    }
+    window.addEventListener('scroll', updateSpy, { passive: true });
+    window.addEventListener('resize', updateSpy);
+    updateSpy();
 
     // ---- Email copy ----
     var email = 'lucascruz0103@gmail.com';
