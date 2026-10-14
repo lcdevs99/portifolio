@@ -230,8 +230,9 @@
   .fact .v { font-size: 13px; font-weight: 600; font-family: var(--mono); text-align: right; }
 
   /* ---------- Projects ---------- */
-  .projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  @media (max-width: 760px) { .projects { grid-template-columns: 1fr; } }
+  .projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 900px) { .projects { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .projects { grid-template-columns: 1fr; } }
   .card {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -483,6 +484,12 @@
         <div class="stack"><span class="chip">Backend</span><span class="chip">APIs</span><span class="chip" data-pt="Suporte" data-en="Support"></span></div>
       </article>
       <article class="card reveal">
+        <span class="tag">ML Ops · Pipeline</span>
+        <h3 data-pt="Ciclo de aprendizagem" data-en="Learning loop"></h3>
+        <p data-pt="Pipeline que parte de conversas reais e passa por transcrição, estruturação e destilação até virar conhecimento revisado por humano, publicado direto no discurso dos agentes de voz e de WhatsApp." data-en="A pipeline that starts from real conversations and runs through transcription, structuring and distillation into human-reviewed knowledge, published straight into the voice and WhatsApp agents' speech."></p>
+        <div class="stack"><span class="chip">Python</span><span class="chip">PostgreSQL</span><span class="chip">RAG</span></div>
+      </article>
+      <article class="card reveal">
         <span class="tag">Dashboards · BI</span>
         <h3 data-pt="Extensões Qlik para a TIM" data-en="Qlik extensions for TIM"></h3>
         <p data-pt="Na OPLIUM, criei extensões e mashups personalizados em Qlik com JavaScript e CSS, integrados ao NPrinting para relatórios automáticos, apoiando decisões estratégicas da TIM." data-en="At OPLIUM, I built custom Qlik extensions and mashups with JavaScript and CSS, integrated with NPrinting for automated reports, supporting TIM's strategic decisions."></p>
@@ -590,9 +597,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
           LinkedIn
         </a>
-        <a href="https://potifolio-lucas-cruz.vercel.app/" target="_blank" rel="noopener" class="contact-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-          <span data-pt="Portfólio antigo" data-en="Old portfolio"></span>
+        <a href="https://github.com/lcdevs99" target="_blank" rel="noopener" class="contact-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
         </a>
       </div>
       <div class="copied-note" id="copiedNote"></div>
